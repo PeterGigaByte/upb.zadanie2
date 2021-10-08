@@ -8,9 +8,9 @@ import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 public class Crypt {
-    public static void crypto(String kluc, File vstupnyFile, File vystupnyFile, int mod) throws Exception {
+    public static void crypto(Key kluc, File vstupnyFile, File vystupnyFile, int mod) throws Exception {
 
-        Key tajnyKluc = new SecretKeySpec(kluc.getBytes(), "AES");
+
         Cipher cipher = null;
         try {
             cipher = Cipher.getInstance("AES");
@@ -19,10 +19,10 @@ public class Crypt {
         }
 
         if (mod==1){
-            cipher.init(Cipher.ENCRYPT_MODE, tajnyKluc);
+            cipher.init(Cipher.ENCRYPT_MODE, kluc);
         }
         else if (mod==2){
-            cipher.init(Cipher.DECRYPT_MODE, tajnyKluc);
+            cipher.init(Cipher.DECRYPT_MODE, kluc);
         }
         else throw new Exception("Zly mod");
 

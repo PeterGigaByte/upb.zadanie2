@@ -1,9 +1,23 @@
 import java.io.*;
+import java.security.Key;
+import java.util.Scanner;
 
 public class Console {
     BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     int mode;
     public void run(String[] args) throws Exception {
+        File theDir = new File("encripted");
+        if (!theDir.exists()){
+            theDir.mkdir();
+        }
+        theDir = new File("decripted");
+        if (!theDir.exists()){
+            theDir.mkdir();
+        }
+        theDir = new File("keys");
+        if (!theDir.exists()){
+            theDir.mkdir();
+        }
         System.out.println();
         System.out.println("Vítam vás v tejto konzolovej aplikácii pre šifrovanie alebo dešifrovanie dokumentov.");
         System.out.println("Pozorne čítajte konzolu pre správne fungovanie aplikácie.");
@@ -73,18 +87,66 @@ public class Console {
         System.out.println("Writeable: " + inputFile.canWrite());
         System.out.println("Readable " + inputFile.canRead());
         System.out.println("File size in bytes " + inputFile.length());
+        System.out.println();
+        System.out.println("Krok 3.");
+        System.out.println("Vyberte kľúč.");
+        File keyFile;
+        Key key;
+        if (mode==1){
+            System.out.println("Pre náhodnú generáciu kľúča napíšte 'randomKey'.");
+            System.out.println("Pre načítanie kľúča z textového dokumentu .txt zadajte 'loadKey'.");
+            name=reader.readLine();
+            while (!name.equals("randomKey") && !name.equals("loadKey")){
+                for (int i = 0; i<50; i++){
+                    System.out.println();
+                }
+                System.out.println();
+                System.out.println("Nesprávne.");
+                System.out.println();
+                System.out.println("Krok 3.");
+                System.out.println("Vyberte kľúč.");
+                System.out.println();
+                System.out.println("Pre náhodnú generáciu kľúča napíšte 'randomKey'.");
+                System.out.println("Pre načítanie kľúča z textového dokumentu .txt zadajte 'loadKey'.");
+                name = reader.readLine();
+            }
+            if(name.equals("randomKey")){
+                GenerateKey generateKey = new GenerateKey();
+                key=generateKey.getSecretKey();
+                FileWriter saveKey = new FileWriter("keys/key_"+inputFile.getName().replaceFirst("[.][^.]+$", "")+".txt");
+                saveKey.write(generateKey.keyToString());
+                saveKey.close();
+            }else{
+                keyFile = loadKey();
+                Scanner reader = new Scanner(keyFile);
+                String dataKey = null;
+                while (reader.hasNextLine()) {
+                    dataKey = reader.nextLine();
+                }
+                key = GenerateKey.stringToKey(dataKey);
+            }
+        }else{
+            keyFile = loadKey();
+            Scanner reader = new Scanner(keyFile);
+            String dataKey = null;
+            while (reader.hasNextLine()) {
+                dataKey = reader.nextLine();
+            }
+            key = GenerateKey.stringToKey(dataKey);
+        }
+        System.out.println();
         File outputFile;
         if(mode==1){
             System.out.println();
             System.out.println("Zahajuje sa šifrovanie.");
-             outputFile = new File( "encripted_file");
+             outputFile = new File( "encripted/encripted_file_"+inputFile.getName());
         }else{
             System.out.println();
             System.out.println("Zahajuje sa dešifrovanie.");
-             outputFile = new File( "decribted_file");
+             outputFile = new File( "decripted/decribted_file_"+inputFile.getName());
         }
         try{
-        Crypt.crypto( "Mary has one cat",inputFile,outputFile,mode);
+        Crypt.crypto( key,inputFile,outputFile,mode);
         if(mode==1){
             System.out.println();
             System.out.println("Akcia bola dokončená.");
@@ -97,6 +159,21 @@ public class Console {
             System.out.println("Niečo sa pokazilo.");
         }
         end(args);
+    }
+
+    private File loadKey() throws IOException {
+        File keyFile;
+        System.out.println("Pre načítanie kľúča z textového dokumentu .txt zadajte cestu tak ako v predchádzajúcom kroku.");
+        keyFile = new File(reader.readLine());
+        while (!keyFile.exists()){
+            System.out.println();
+            System.out.println("Krok 3.");
+            System.out.println("Vyberte kľúč.");
+            System.out.println();
+            System.out.println("Pre načítanie kľúča z textového dokumentu .txt zadajte cestu tak ako v predchádzajúcom kroku.");
+            keyFile = new File(reader.readLine());
+        }
+        return keyFile;
     }
 
     public void end(String[] args) throws Exception {
