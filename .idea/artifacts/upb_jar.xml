@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="upb:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/upb_jar</output-path>
+    <root id="archive" name="upb.jar">
+      <element id="module-output" name="upb" />
+    </root>
+  </artifact>
+</component>
