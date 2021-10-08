@@ -3,7 +3,7 @@ import java.io.*;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 public class Crypt {
-    public static void crypto(Key kluc, File vstupnyFile, File vystupnyFile, int mod) throws Exception {
+    public static void cryptFunction(Key key, File inputFile, File outputFile, int mode) throws Exception {
         Cipher cipher = null;
         try {
             cipher = Cipher.getInstance("AES");
@@ -11,31 +11,31 @@ public class Crypt {
             e.printStackTrace();
         }
 
-        if (mod==1){
-            cipher.init(Cipher.ENCRYPT_MODE, kluc);
+        if (mode==1){
+            cipher.init(Cipher.ENCRYPT_MODE, key);
         }
-        else if (mod==2){
-            cipher.init(Cipher.DECRYPT_MODE, kluc);
+        else if (mode==2){
+            cipher.init(Cipher.DECRYPT_MODE, key);
         }
-        else throw new Exception("Zly mod");
+        else throw new Exception("Wrong mode");
 
 
-        FileInputStream vstupnyStream = null;
+        FileInputStream fileInputStream = null;
 
         try {
-            vstupnyStream = new FileInputStream(vstupnyFile);
+            fileInputStream = new FileInputStream(inputFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
 
-        byte[] vystupneBytes = new byte[1024*1024];
+        byte[] outputBytes = new byte[1024*1024];
         int bytes;
-        CipherOutputStream cos = new CipherOutputStream(new FileOutputStream(vystupnyFile), cipher);
+        CipherOutputStream cos = new CipherOutputStream(new FileOutputStream(outputFile), cipher);
 
-        while((bytes = vstupnyStream.read(vystupneBytes)) > 0)
+        while((bytes = fileInputStream.read(outputBytes)) > 0)
         {
-            cos.write(vystupneBytes, 0, bytes);
+            cos.write(outputBytes, 0, bytes);
         }
         cos.flush();
         cos.close();

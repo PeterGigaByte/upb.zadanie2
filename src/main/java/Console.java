@@ -148,7 +148,7 @@ public class Console {
         }
         try{
             TimeWatch watch = TimeWatch.start();
-            Crypt.crypto( key,inputFile,outputFile,mode);
+            Crypt.cryptFunction( key,inputFile,outputFile,mode);
             long passedTimeInMs = watch.time();
             long passedTimeInSeconds = watch.time(TimeUnit.SECONDS);
         if(mode==1){
