@@ -2,7 +2,8 @@ import java.io.*;
 
 public class Console {
     BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-    public void run(String[] args) throws IOException {
+    int mode;
+    public void run(String[] args) throws Exception {
         System.out.println();
         System.out.println("Vítam vás v tejto konzolovej aplikácii pre šifrovanie alebo dešifrovanie dokumentov. Pozorne čítajte konzolu pre správne fungovanie aplikácie.");
         System.out.println();
@@ -24,8 +25,10 @@ public class Console {
         }
         System.out.println();
         if(name.equals("d") ){
+            mode=2;
             System.out.println("Vybrali ste si dešifrovanie.");
         }else{
+            mode=1;
             System.out.println("Vybrali ste si šifrovanie.");
         }
         System.out.println();
@@ -35,7 +38,8 @@ public class Console {
         System.out.println();
         System.out.println("Napíšte mi celkovú cestu k súboru.");
         System.out.println("Príklad formátu: 'C:\\AiOLog.txt' ");
-        File inputFile = new File(name = reader.readLine());
+        System.out.println("Príklad formátu 2(ak sa súbor nachádza v rovnakom priečinku): 'AiOLog.txt' ");
+        File inputFile = new File(reader.readLine());
         while (!inputFile.exists()){
             System.out.println();
             System.out.println("Tento súbor neexistuje alebo je zle uvedená cesta.");
@@ -44,21 +48,49 @@ public class Console {
             System.out.println();
             System.out.println("Napíšte mi celkovú cestu k súboru.");
             System.out.println("Príklad formátu: 'C:\\AiOLog.txt' ");
+            System.out.println("Príklad formátu 2(ak sa súbor nachádza v rovnakom priečinku): 'AiOLog.txt' ");
             System.out.println();
-            inputFile = new File(name = reader.readLine());
+            inputFile = new File( reader.readLine());
         }
+        System.out.println();
         System.out.println("Výborne, súbor bol nájdený.");
+        System.out.println();
         System.out.println("File name: " + inputFile.getName());
         System.out.println("Absolute path: " + inputFile.getAbsolutePath());
         System.out.println("Writeable: " + inputFile.canWrite());
         System.out.println("Readable " + inputFile.canRead());
         System.out.println("File size in bytes " + inputFile.length());
-    }
-    public boolean crypt(File inputFile){
-        return true;
+        File outputFile;
+        if(mode==1){
+            System.out.println();
+            System.out.println("Zahajuje sa šifrovanie.");
+             outputFile = new File( "encripted_file");
+        }else{
+            System.out.println();
+            System.out.println("Zahajuje sa dešifrovanie.");
+             outputFile = new File( "decribted_file");
+        }
 
+        Crypt.crypto( "Mary has one cat",inputFile,outputFile,mode);
+        if(mode==1){
+            System.out.println();
+            System.out.println("Šifrovanie prebehlo úspešne.");
+
+        }else{
+            System.out.println();
+            System.out.println("Dešifrovanie prebehlo úspešne.");
+        }
+        end(args);
     }
-    public boolean decrypt(File inputFile){
-        return false;
+
+    public void end(String[] args) throws Exception {
+        System.out.println();
+        System.out.println("Write 'again' to try again.");
+        System.out.println("or");
+        System.out.println("Press enter to exit.");
+        String input = reader.readLine();
+        if(input.equals("again")){
+            run(args);
+        }
     }
 }
