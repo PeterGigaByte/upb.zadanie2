@@ -1,6 +1,7 @@
 import java.io.*;
 import java.security.Key;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public class Console {
     BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -146,15 +147,26 @@ public class Console {
              outputFile = new File( "decripted/decribted_file_"+inputFile.getName());
         }
         try{
-        Crypt.crypto( key,inputFile,outputFile,mode);
+            TimeWatch watch = TimeWatch.start();
+            Crypt.crypto( key,inputFile,outputFile,mode);
+            long passedTimeInMs = watch.time();
+            long passedTimeInSeconds = watch.time(TimeUnit.SECONDS);
         if(mode==1){
             System.out.println();
             System.out.println("Akcia bola dokončená.");
-
         }else{
             System.out.println();
             System.out.println("Akcia bola dokončená.");
-        }}catch (Exception e){
+        }
+            System.out.println("Operácia trvala "+passedTimeInMs+" milisekúnd.");
+            if(passedTimeInSeconds==2){
+                System.out.println("Operácia trvala "+passedTimeInSeconds+" sekundy.");
+            }else if(passedTimeInSeconds==1){
+                System.out.println("Operácia trvala "+passedTimeInSeconds+" sekundu.");
+            }else {
+                System.out.println("Operácia trvala "+passedTimeInSeconds+" sekúnd.");
+            }
+        }catch (Exception e){
             System.out.println();
             System.out.println("Niečo sa pokazilo.");
         }
