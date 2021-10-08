@@ -6,7 +6,11 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) throws Exception {
         Console console = new Console();
-        console.run(args);
+        try{
+        console.run(args);}catch (Exception e){
+            System.out.println("Nastala chyba, reštartujem sa.");
+            console.run(args);
+        }
 
     }
 

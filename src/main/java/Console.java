@@ -5,7 +5,8 @@ public class Console {
     int mode;
     public void run(String[] args) throws Exception {
         System.out.println();
-        System.out.println("Vítam vás v tejto konzolovej aplikácii pre šifrovanie alebo dešifrovanie dokumentov. Pozorne čítajte konzolu pre správne fungovanie aplikácie.");
+        System.out.println("Vítam vás v tejto konzolovej aplikácii pre šifrovanie alebo dešifrovanie dokumentov.");
+        System.out.println("Pozorne čítajte konzolu pre správne fungovanie aplikácie.");
         System.out.println();
         System.out.println("Krok 1.");
         System.out.println("Zadajte či chcete šifrovať/dešifrovať.");
@@ -14,6 +15,9 @@ public class Console {
         System.out.println("Pre dešifrovanie napíšte 'd'");
         String name = reader.readLine();
         while (!name.equals("c") && !name.equals("d")){
+            for (int i = 0; i<50; i++){
+                System.out.println();
+            }
             System.out.println();
             System.out.println("Nesprávne.");
             System.out.println();
@@ -22,6 +26,9 @@ public class Console {
             System.out.println("Pre šifrovanie napíšte 'c'");
             System.out.println("Pre dešifrovanie napíšte 'd'");
             name = reader.readLine();
+        }
+        for (int i = 0; i<50; i++){
+            System.out.println();
         }
         System.out.println();
         if(name.equals("d") ){
@@ -41,6 +48,9 @@ public class Console {
         System.out.println("Príklad formátu 2(ak sa súbor nachádza v rovnakom priečinku): 'AiOLog.txt' ");
         File inputFile = new File(reader.readLine());
         while (!inputFile.exists()){
+            for (int i = 0; i<50; i++){
+                System.out.println();
+            }
             System.out.println();
             System.out.println("Tento súbor neexistuje alebo je zle uvedená cesta.");
             System.out.println();
@@ -51,6 +61,9 @@ public class Console {
             System.out.println("Príklad formátu 2(ak sa súbor nachádza v rovnakom priečinku): 'AiOLog.txt' ");
             System.out.println();
             inputFile = new File( reader.readLine());
+        }
+        for (int i = 0; i<50; i++){
+            System.out.println();
         }
         System.out.println();
         System.out.println("Výborne, súbor bol nájdený.");
@@ -70,15 +83,18 @@ public class Console {
             System.out.println("Zahajuje sa dešifrovanie.");
              outputFile = new File( "decribted_file");
         }
-
+        try{
         Crypt.crypto( "Mary has one cat",inputFile,outputFile,mode);
         if(mode==1){
             System.out.println();
-            System.out.println("Šifrovanie prebehlo úspešne.");
+            System.out.println("Akcia bola dokončená.");
 
         }else{
             System.out.println();
-            System.out.println("Dešifrovanie prebehlo úspešne.");
+            System.out.println("Akcia bola dokončená.");
+        }}catch (Exception e){
+            System.out.println();
+            System.out.println("Niečo sa pokazilo.");
         }
         end(args);
     }
@@ -89,8 +105,13 @@ public class Console {
         System.out.println("or");
         System.out.println("Press enter to exit.");
         String input = reader.readLine();
+
         if(input.equals("again")){
+            for (int i = 0; i<50; i++){
+                System.out.println();
+            }
             run(args);
         }
     }
+
 }
