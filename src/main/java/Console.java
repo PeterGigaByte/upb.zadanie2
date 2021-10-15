@@ -7,11 +7,11 @@ public class Console {
     BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     int mode;
     public void run(String[] args) throws Exception {
-        File theDir = new File("encripted");
+        File theDir = new File("encrypted");
         if (!theDir.exists()){
             theDir.mkdir();
         }
-        theDir = new File("decripted");
+        theDir = new File("decrypted");
         if (!theDir.exists()){
             theDir.mkdir();
         }
@@ -140,11 +140,11 @@ public class Console {
         if(mode==1){
             System.out.println();
             System.out.println("Zahajuje sa šifrovanie.");
-             outputFile = new File( "encripted/encripted_file_"+inputFile.getName());
+             outputFile = new File( "encrypted/encrypted_file_"+inputFile.getName());
         }else{
             System.out.println();
             System.out.println("Zahajuje sa dešifrovanie.");
-             outputFile = new File( "decripted/decribted_file_"+inputFile.getName());
+             outputFile = new File( "decrypted/decrypted_file_"+inputFile.getName());
         }
         try{
             TimeWatch watch = TimeWatch.start();
