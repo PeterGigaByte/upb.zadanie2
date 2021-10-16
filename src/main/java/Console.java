@@ -1,11 +1,21 @@
+import javax.crypto.NoSuchPaddingException;
 import java.io.*;
+import java.nio.file.Files;
 import java.security.Key;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 public class Console {
     BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    AsymmetricCrypt ac = new AsymmetricCrypt();
+    PublicSecretKey generator = new PublicSecretKey(1024);
     int mode;
+
+    public Console() throws NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException {
+    }
+
     public void run(String[] args) throws Exception {
         File theDir = new File("encrypted");
         if (!theDir.exists()){
@@ -15,10 +25,19 @@ public class Console {
         if (!theDir.exists()){
             theDir.mkdir();
         }
-        theDir = new File("keys");
+        theDir = new File("aes keys");
         if (!theDir.exists()){
             theDir.mkdir();
         }
+        theDir = new File("public rsa keys");
+        if (!theDir.exists()){
+            theDir.mkdir();
+        }
+        theDir = new File("private rsa keys");
+        if (!theDir.exists()){
+            theDir.mkdir();
+        }
+        //krok 1 vyber co chceme robit
         System.out.println();
         System.out.println("Vítam vás v tejto konzolovej aplikácii pre šifrovanie alebo dešifrovanie dokumentov.");
         System.out.println("Pozorne čítajte konzolu pre správne fungovanie aplikácie.");
@@ -53,6 +72,7 @@ public class Console {
             mode=1;
             System.out.println("Vybrali ste si šifrovanie.");
         }
+        //krok 2 vyber suboru co chceme sifrovat/desifrovat
         System.out.println();
         System.out.println("Výborne, v nasledujúcom kroku je potrebné mi dať vedieť, ktorý súbor chceme dešifrovať/zašifrovať.");
         System.out.println();
@@ -80,6 +100,7 @@ public class Console {
         for (int i = 0; i<50; i++){
             System.out.println();
         }
+        //krok 3 vyber kluca na zasifrovanie/desifrovanie
         System.out.println();
         System.out.println("Výborne, súbor bol nájdený.");
         System.out.println();
@@ -93,6 +114,7 @@ public class Console {
         System.out.println("Vyberte kľúč.");
         File keyFile;
         Key key;
+        //krok 3 sifrovanie
         if (mode==1){
             System.out.println("Pre náhodnú generáciu kľúča napíšte 'randomKey'.");
             System.out.println("Pre načítanie kľúča z textového dokumentu .txt zadajte 'loadKey'.");
@@ -114,10 +136,12 @@ public class Console {
             if(name.equals("randomKey")){
                 GenerateKey generateKey = new GenerateKey();
                 key=generateKey.getSecretKey();
-                FileWriter saveKey = new FileWriter("keys/key_"+inputFile.getName().replaceFirst("[.][^.]+$", "")+".txt");
+                FileWriter saveKey = new FileWriter("aes keys/key_"+inputFile.getName().replaceFirst("[.][^.]+$", "")+".txt");
                 saveKey.write(generateKey.keyToString());
                 saveKey.close();
-            }else{
+            }
+            //krok 3 sifrovanie s konkretnym klucom
+            else{
                 keyFile = loadKey();
                 Scanner reader = new Scanner(keyFile);
                 String dataKey = null;
@@ -126,17 +150,29 @@ public class Console {
                 }
                 key = GenerateKey.stringToKey(dataKey);
             }
-        }else{
+            generator.createKeys();
+            generator.writeToFile("public rsa keys/pubKEY_"+inputFile.getName().replaceFirst("[.][^.]+$", "")+".txt", generator.getPublicKey().getEncoded());
+            generator.writeToFile("private rsa keys/priKEY_"+inputFile.getName().replaceFirst("[.][^.]+$", "")+".txt", generator.getPrivateKey().getEncoded());
+            File aesEncrypted = new File("aes keys/key_"+inputFile.getName().replaceFirst("[.][^.]+$", "")+".txt");
+            byte[] data = Files.readAllBytes(aesEncrypted.toPath());
+            ac.encryptFile(data,aesEncrypted,generator.getPublicKey());
+        }
+        //krok 3 desifrovanie s konkretnym klucom
+        else{
             keyFile = loadKey();
-            Scanner reader = new Scanner(keyFile);
             String dataKey = null;
-            while (reader.hasNextLine()) {
-                dataKey = reader.nextLine();
-            }
+            //Scanner reader = new Scanner(keyFile);
+            //while (reader.hasNextLine()) {
+            //    dataKey = reader.nextLine();
+            //}
+            byte[] data = Files.readAllBytes(keyFile.toPath());
+            dataKey = ac.decryptFile(data,ac.getPrivate("C:\\upb\\target\\private rsa keys\\priKEY_dv.txt"));
             key = GenerateKey.stringToKey(dataKey);
+            System.out.println(key);
         }
         System.out.println();
         File outputFile;
+        //finalna akcia na zaklade predchadzajucich krokov
         if(mode==1){
             System.out.println();
             System.out.println("Zahajuje sa šifrovanie.");

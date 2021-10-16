@@ -17,7 +17,7 @@ public class AsymmetricCrypt {
     public AsymmetricCrypt() throws NoSuchAlgorithmException, NoSuchPaddingException {
         this.cipher = Cipher.getInstance("RSA");
     }
-
+/*
     public static void main(String[] args) throws Exception {
         AsymmetricCrypt ac = new AsymmetricCrypt();
         PrivateKey privateKey = ac.getPrivate("KeyPair/privateKey");
@@ -39,8 +39,8 @@ public class AsymmetricCrypt {
             System.out.println("Create a file text.txt under folder KeyPair");
         }
     }
+*/
 
-    // https://docs.oracle.com/javase/8/docs/api/java/security/spec/PKCS8EncodedKeySpec.html
     public PrivateKey getPrivate(String filename) throws Exception {
         byte[] keyBytes = Files.readAllBytes(new File(filename).toPath());
         PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
@@ -56,16 +56,21 @@ public class AsymmetricCrypt {
         return kf.generatePublic(spec);
     }
 
-    public void encryptFile(byte[] input, File output, PrivateKey key)
+    public void encryptFile(byte[] input, File output, PublicKey key)
             throws IOException, GeneralSecurityException {
         this.cipher.init(Cipher.ENCRYPT_MODE, key);
         writeToFile(output, this.cipher.doFinal(input));
     }
 
-    public void decryptFile(byte[] input, File output, PublicKey key)
+    public void decryptFile(byte[] input, File output, PrivateKey key)
             throws IOException, GeneralSecurityException {
         this.cipher.init(Cipher.DECRYPT_MODE, key);
         writeToFile(output, this.cipher.doFinal(input));
+    }
+    public String decryptFile(byte[] input, PrivateKey key)
+            throws IOException, GeneralSecurityException {
+        this.cipher.init(Cipher.DECRYPT_MODE, key);
+        return new String(this.cipher.doFinal(input));
     }
 
     private void writeToFile(File output, byte[] toWrite)
