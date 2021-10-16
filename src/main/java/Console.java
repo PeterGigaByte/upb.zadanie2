@@ -156,6 +156,9 @@ public class Console {
             File aesEncrypted = new File("aes keys/key_"+inputFile.getName().replaceFirst("[.][^.]+$", "")+".txt");
             byte[] data = Files.readAllBytes(aesEncrypted.toPath());
             ac.encryptFile(data,aesEncrypted,generator.getPublicKey());
+
+
+
         }
         //krok 3 desifrovanie s konkretnym klucom
         else{
@@ -166,9 +169,8 @@ public class Console {
             //    dataKey = reader.nextLine();
             //}
             byte[] data = Files.readAllBytes(keyFile.toPath());
-            dataKey = ac.decryptFile(data,ac.getPrivate("C:\\upb\\target\\private rsa keys\\priKEY_dv.txt"));
+            dataKey = ac.decryptFile(data,ac.getPrivate("private rsa keys/priKEY_"+inputFile.getName().replace("encrypted_file_","")));
             key = GenerateKey.stringToKey(dataKey);
-            System.out.println(key);
         }
         System.out.println();
         File outputFile;
@@ -176,11 +178,13 @@ public class Console {
         if(mode==1){
             System.out.println();
             System.out.println("Zahajuje sa šifrovanie.");
-             outputFile = new File( "encrypted/encrypted_file_"+inputFile.getName());
+            outputFile = new File( "encrypted/encrypted_file_"+inputFile.getName());
+
         }else{
             System.out.println();
             System.out.println("Zahajuje sa dešifrovanie.");
-             outputFile = new File( "decrypted/decrypted_file_"+inputFile.getName());
+            outputFile = new File( "decrypted/decrypted_file_"+inputFile.getName());
+            System.out.println(Files.getAttribute(inputFile.toPath(), "user:encryption used"));
         }
         try{
             TimeWatch watch = TimeWatch.start();
